@@ -53,6 +53,19 @@ parseRoute.post('/', async (req, res) => {
       });
     }
 
+    // Strip honorifics from passenger names (fallback in case GPT misses any)
+    const HONORIFICS = /^(mr\.?|mrs\.?|ms\.?|miss\.?|dr\.?|prof\.?)\s+/i;
+    if (parsed.passengers) {
+      parsed.passengers = parsed.passengers.map((p) => ({
+        ...p,
+        name: p.name ? p.name.replace(HONORIFICS, '').trim() : p.name,
+      }));
+    }
+    if (parsed.trip_summary?.traveler_name) {
+      parsed.trip_summary.traveler_name = parsed.trip_summary.traveler_name
+        .replace(HONORIFICS, '').trim();
+    }
+
     return res.json({ success: true, data: parsed });
   } catch (err) {
     console.error('[parse] Error:', err);

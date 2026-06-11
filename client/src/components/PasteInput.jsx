@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const ICONS = ['✈️', '🏨', '🚆', '🚗', '🚢', '🧳'];
 
@@ -35,32 +35,110 @@ const TRAVELER_TYPES = [
   },
 ];
 
-const defaultSegment = (id) => ({
-  id,
-  name: `Document ${id}`,
-  text: '',
-});
+let _nextId = 1;
+const makeSegment = () => ({ id: _nextId++, customName: '', text: '' });
+
+// Individual animated segment card
+function SegmentCard({ segment, displayIndex, total, onRemove, onChangeName, onChangeText, isNew }) {
+  const ref = useRef(null);
+
+  // Trigger enter animation on mount
+  useEffect(() => {
+    if (!isNew) return;
+    const el = ref.current;
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-12px) scale(0.98)';
+    // Force reflow then transition in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = 'opacity 0.3s cubic-bezier(0.34, 1.1, 0.64, 1), transform 0.35s cubic-bezier(0.34, 1.1, 0.64, 1)';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+  }, []);
+
+  const autoName = `Document ${displayIndex}`;
+  const displayName = segment.customName || autoName;
+
+  return (
+    <div ref={ref} className="glass-card segment-card">
+      <div className="segment-top">
+        <div className="segment-label">
+          <div className="segment-icon">{ICONS[(displayIndex - 1) % ICONS.length]}</div>
+          <input
+            className="segment-name-input"
+            value={segment.customName}
+            onChange={(e) => onChangeName(segment.id, e.target.value)}
+            placeholder={autoName}
+            id={`segment-name-${segment.id}`}
+          />
+        </div>
+        {total > 1 && (
+          <button
+            className="btn-remove"
+            onClick={() => onRemove(segment.id)}
+            aria-label="Remove segment"
+            id={`btn-remove-${segment.id}`}
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      <textarea
+        className="segment-textarea"
+        value={segment.text}
+        onChange={(e) => onChangeText(segment.id, e.target.value)}
+        placeholder={`Paste your raw booking email or confirmation here...\n\nExamples:\n• Flight booking confirmation from airline\n• Hotel reservation email\n• Train ticket details\n• Car rental confirmation`}
+        id={`segment-text-${segment.id}`}
+        spellCheck={false}
+      />
+    </div>
+  );
+}
 
 export default function PasteInput({ onParse, loading }) {
-  const [segments, setSegments] = useState([defaultSegment(1)]);
-  const [nextId, setNextId] = useState(2);
+  const [segments, setSegments] = useState([makeSegment()]);
+  const [removingIds, setRemovingIds] = useState(new Set());
+  const [newIds, setNewIds] = useState(new Set());
   const [travelerType, setTravelerType] = useState('mid-range');
 
   const addSegment = () => {
-    setSegments((s) => [...s, defaultSegment(nextId)]);
-    setNextId((n) => n + 1);
+    const seg = makeSegment();
+    setNewIds((prev) => new Set([...prev, seg.id]));
+    setSegments((s) => [...s, seg]);
+    // Clean up newIds flag after animation completes
+    setTimeout(() => {
+      setNewIds((prev) => {
+        const next = new Set(prev);
+        next.delete(seg.id);
+        return next;
+      });
+    }, 400);
   };
 
   const removeSegment = (id) => {
-    if (segments.length === 1) return;
-    setSegments((s) => s.filter((seg) => seg.id !== id));
+    if (segments.length - removingIds.size <= 1) return;
+
+    // Mark as removing so we can animate out
+    setRemovingIds((prev) => new Set([...prev, id]));
+
+    setTimeout(() => {
+      setSegments((s) => s.filter((seg) => seg.id !== id));
+      setRemovingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 280);
   };
 
   const updateText = (id, text) =>
     setSegments((s) => s.map((seg) => (seg.id === id ? { ...seg, text } : seg)));
 
-  const updateName = (id, name) =>
-    setSegments((s) => s.map((seg) => (seg.id === id ? { ...seg, name } : seg)));
+  const updateName = (id, customName) =>
+    setSegments((s) => s.map((seg) => (seg.id === id ? { ...seg, customName } : seg)));
 
   const handleParse = () => {
     const texts = segments.map((s) => s.text).filter((t) => t.trim());
@@ -70,9 +148,11 @@ export default function PasteInput({ onParse, loading }) {
 
   const hasContent = segments.some((s) => s.text.trim().length > 0);
 
+  // Visible (non-removing) segments get sequential display numbers
+  const visibleSegments = segments.filter((s) => !removingIds.has(s.id));
+
   return (
     <div className="paste-section">
-      {/* Documents */}
       <div className="paste-header">
         <h2>Paste your booking documents</h2>
         <button className="btn-add" onClick={addSegment} id="btn-add-segment">
@@ -81,40 +161,28 @@ export default function PasteInput({ onParse, loading }) {
       </div>
 
       <div className="segments-list">
-        {segments.map((seg, idx) => (
-          <div key={seg.id} className="glass-card segment-card">
-            <div className="segment-top">
-              <div className="segment-label">
-                <div className="segment-icon">{ICONS[idx % ICONS.length]}</div>
-                <input
-                  className="segment-name-input"
-                  value={seg.name}
-                  onChange={(e) => updateName(seg.id, e.target.value)}
-                  placeholder="Document name..."
-                  id={`segment-name-${seg.id}`}
-                />
-              </div>
-              {segments.length > 1 && (
-                <button
-                  className="btn-remove"
-                  onClick={() => removeSegment(seg.id)}
-                  aria-label="Remove segment"
-                  id={`btn-remove-${seg.id}`}
-                >
-                  ✕
-                </button>
-              )}
+        {segments.map((seg) => {
+          const isRemoving = removingIds.has(seg.id);
+          // Display index = position among visible segments only
+          const displayIndex = visibleSegments.findIndex((s) => s.id === seg.id) + 1;
+
+          return (
+            <div
+              key={seg.id}
+              className={`segment-wrapper ${isRemoving ? 'segment-removing' : ''}`}
+            >
+              <SegmentCard
+                segment={seg}
+                displayIndex={displayIndex || 1}
+                total={visibleSegments.length}
+                onRemove={removeSegment}
+                onChangeName={updateName}
+                onChangeText={updateText}
+                isNew={newIds.has(seg.id)}
+              />
             </div>
-            <textarea
-              className="segment-textarea"
-              value={seg.text}
-              onChange={(e) => updateText(seg.id, e.target.value)}
-              placeholder={`Paste your raw booking email or confirmation here...\n\nExamples:\n• Flight booking confirmation from airline\n• Hotel reservation email\n• Train ticket details\n• Car rental confirmation`}
-              id={`segment-text-${seg.id}`}
-              spellCheck={false}
-            />
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Traveler Type Selector */}
@@ -137,8 +205,10 @@ export default function PasteInput({ onParse, loading }) {
                   '--type-border': type.border,
                 } : {}}
               >
-                <div className="traveler-type-icon"
-                  style={{ background: isActive ? type.glow : undefined, borderColor: isActive ? type.border : undefined }}>
+                <div
+                  className="traveler-type-icon"
+                  style={isActive ? { background: type.glow, borderColor: type.border } : {}}
+                >
                   {type.icon}
                 </div>
                 <div className="traveler-type-body">
@@ -157,7 +227,6 @@ export default function PasteInput({ onParse, loading }) {
         </div>
       </div>
 
-      {/* Parse Button */}
       <div className="parse-btn-wrap">
         <button
           className="btn-parse"

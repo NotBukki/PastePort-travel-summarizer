@@ -38,7 +38,7 @@ function duration(dep, arr) {
   } catch { return null; }
 }
 
-export default function EventCard({ event, index }) {
+export default function EventCard({ event, index, format }) {
   const meta  = TYPE_META[event.type] || TYPE_META.other;
   const dur   = duration(event.departure, event.arrival);
   const depDate = formatDate(event.departure);
@@ -46,6 +46,13 @@ export default function EventCard({ event, index }) {
   const arrDate = formatDate(event.arrival);
   const hasPrice = event.price?.amount > 0;
   const isHotel = event.type === 'hotel';
+
+  // Convert the extracted price from its original currency to the user's display currency
+  const formattedPrice = hasPrice && format
+    ? format(event.price.amount, event.price.currency || 'USD')
+    : hasPrice
+      ? `${event.price.currency || 'USD'} ${event.price.amount.toLocaleString()}`
+      : null;
 
   return (
     <div
@@ -68,9 +75,7 @@ export default function EventCard({ event, index }) {
               {event.carrier && <div className="event-carrier">{event.carrier}</div>}
             </div>
             <div className={`event-price ${hasPrice ? '' : 'zero'}`}>
-              {hasPrice
-                ? `${event.price.currency === 'USD' ? '$' : ''}${event.price.amount.toLocaleString()} ${event.price.currency !== 'USD' ? event.price.currency : ''}`
-                : '—'}
+              {formattedPrice ?? '—'}
             </div>
           </div>
 

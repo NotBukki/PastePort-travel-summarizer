@@ -47,8 +47,9 @@ RULES:
 - For hotels, "departure" is check-in datetime and "arrival" is check-out datetime.
 - Nights for a hotel = check-out date - check-in date. For flights with no hotel, estimate nights from total itinerary.
 - Extract ALL passengers listed in the documents, including all names and their individual add-ons/extras.
-- For destinations, provide estimated_daily_budget_usd based on the traveler profile above. This must be a DAILY figure, not total.
-- total_estimated_stay_usd = estimated_daily_budget_usd × nights (compute this yourself).
+- PASSENGER NAMES: strip all honorifics and titles. Remove "Mr", "Mrs", "Ms", "Miss", "Dr", "Prof" and any similar prefix. Return only the full given name + surname (e.g. "Alex Morgan" not "Mr Alex Morgan").
+- Budget estimates are PER PERSON PER DAY. estimated_daily_budget_usd is the daily cost for ONE traveler.
+- total_estimated_stay_usd = estimated_daily_budget_usd × nights (per person, the frontend will multiply by traveler count).
 - If origin city cannot be determined, set "from" to "Unknown".
 - All amounts should be in USD equivalent. If the original currency is different, note it in notes.
 - trip_summary.total_cost_extracted_usd should sum only EXPLICITLY mentioned prices in the documents.
@@ -72,8 +73,8 @@ RESPONSE SCHEMA (return ONLY this JSON, no markdown, no explanation):
   ],
   "passengers": [
     {
-      "name": "Full passenger name",
-      "addons": ["e.g. Priority & 2 Cabin Bags", "20kg hold bag", etc.]
+      "name": "Full passenger name WITHOUT honorifics (no Mr/Mrs/Ms/Dr etc)",
+      "addons": ["e.g. Priority & 2 Cabin Bags", "20kg hold bag"]
     }
   ],
   "destinations": [

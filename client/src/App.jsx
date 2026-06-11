@@ -1,8 +1,10 @@
 import { useTripParser } from './hooks/useTripParser';
+import { useCurrency } from './hooks/useCurrency';
 import PasteInput from './components/PasteInput';
 import Timeline from './components/Timeline';
 import BudgetPanel from './components/BudgetPanel';
 import LoadingOverlay from './components/LoadingOverlay';
+import CurrencySwitcher from './components/CurrencySwitcher';
 
 function formatDateRange(start, end) {
   if (!start) return null;
@@ -15,6 +17,7 @@ function formatDateRange(start, end) {
 
 export default function App() {
   const { loading, error, result, travelerType, parse, reset } = useTripParser();
+  const { currency, setCurrency, detectedCurrency, status: currencyStatus, format } = useCurrency();
 
   return (
     <div className="app">
@@ -25,7 +28,15 @@ export default function App() {
             <div className="nav-logo-icon">✈️</div>
             PastePort
           </a>
-          <span className="nav-badge">Beta</span>
+          <div className="nav-right">
+            <CurrencySwitcher
+              currency={currency}
+              detectedCurrency={detectedCurrency}
+              status={currencyStatus}
+              onChangeCurrency={setCurrency}
+            />
+            <span className="nav-badge">Beta</span>
+          </div>
         </div>
       </nav>
 
@@ -113,9 +124,9 @@ export default function App() {
                 )}
                 {result.trip_summary?.total_cost_extracted_usd > 0 && (
                   <div className="stat-item">
-                    <div className="stat-label">Cost Extracted</div>
+                    <div className="stat-label">Confirmed Spend</div>
                     <div className="stat-value accent">
-                      ${result.trip_summary.total_cost_extracted_usd.toLocaleString()}
+                      {format(result.trip_summary.total_cost_extracted_usd)}
                     </div>
                   </div>
                 )}
@@ -124,12 +135,14 @@ export default function App() {
 
             {/* Timeline + Budget */}
             <div className="results-grid">
-              <Timeline events={result.events} />
+              <Timeline events={result.events} format={format} />
               <BudgetPanel
                 destinations={result.destinations}
                 totalCost={result.trip_summary?.total_cost_extracted_usd}
                 passengers={result.passengers}
                 travelerType={travelerType}
+                format={format}
+                currency={currency}
               />
             </div>
           </div>

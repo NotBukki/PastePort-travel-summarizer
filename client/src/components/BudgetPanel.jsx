@@ -61,12 +61,14 @@ function DonutChart({ breakdown }) {
   );
 }
 
-function BudgetCard({ dest, index }) {
+function BudgetCard({ dest, index, passengerCount, format }) {
   const breakdown = dest.budget_breakdown || {};
   const total = Object.values(breakdown).reduce((sum, v) => sum + (v || 0), 0);
   const daily = dest.estimated_daily_budget_usd || 0;
   const nights = dest.nights || 0;
-  const totalStay = dest.total_estimated_stay_usd || (daily * nights) || 0;
+  const perPersonStay = dest.total_estimated_stay_usd || (daily * nights) || 0;
+  const count = Math.max(passengerCount || 1, 1);
+  const groupTotal = perPersonStay * count;
 
   return (
     <div
@@ -85,29 +87,36 @@ function BudgetCard({ dest, index }) {
         )}
       </div>
 
-      {/* Daily + Total budget row */}
+      {/* Per-person daily + per-person stay */}
       <div className="budget-amounts-row">
         <div className="budget-amount-block">
-          <div className="budget-amount-label">Daily budget</div>
-          <div className="budget-daily-amount">
-            ${daily.toLocaleString()}
-            <span className="budget-per-day">/day</span>
-          </div>
+          <div className="budget-amount-label">Per person</div>
+          <div className="budget-daily-amount">{format(daily)}</div>
+          <div className="budget-per-day-sub">/day</div>
         </div>
-        {totalStay > 0 && (
+        {perPersonStay > 0 && (
           <>
             <div className="budget-amounts-divider" />
             <div className="budget-amount-block">
               <div className="budget-amount-label">
-                Total stay {nights > 0 ? `(${nights} nights)` : ''}
+                Per person {nights > 0 ? `(${nights} nights)` : ''}
               </div>
-              <div className="budget-total-amount">
-                ~${totalStay.toLocaleString()}
-              </div>
+              <div className="budget-total-amount">{format ? `~${format(perPersonStay)}` : `~$${perPersonStay.toLocaleString()}`}</div>
+              <div className="budget-per-day-sub">&nbsp;</div>
             </div>
           </>
         )}
       </div>
+
+      {/* Group total row (only if > 1 passenger) */}
+      {count > 1 && groupTotal > 0 && (
+        <div className="budget-group-total">
+          <span className="budget-group-label">
+            👥 {count} travelers total
+          </span>
+          <span className="budget-group-value">{format ? `~${format(groupTotal)}` : `~$${groupTotal.toLocaleString()}`}</span>
+        </div>
+      )}
 
       {/* Donut chart */}
       {total > 0 && <DonutChart breakdown={breakdown} />}
@@ -131,7 +140,7 @@ function BudgetCard({ dest, index }) {
                       style={{ width: `${pct}%`, background: COLORS[i % COLORS.length] }}
                     />
                   </div>
-                  <div className="breakdown-amount">${val}/day</div>
+                  <div className="breakdown-amount">{format ? format(val) : `$${val}`}/day</div>
                 </div>
               );
             })}
@@ -173,9 +182,15 @@ function PassengersCard({ passengers }) {
   );
 }
 
-export default function BudgetPanel({ destinations, totalCost, passengers, travelerType }) {
+export default function BudgetPanel({ destinations, totalCost, passengers, travelerType, format, currency }) {
   const travelerMeta = TRAVELER_LABELS[travelerType] || TRAVELER_LABELS['mid-range'];
-  const grandTotal = destinations?.reduce((sum, d) => sum + (d.total_estimated_stay_usd || 0), 0) || 0;
+  const passengerCount = passengers?.length || 1;
+
+  // Grand total = sum of (perPersonStay × passengerCount) across all destinations
+  const grandTotal = destinations?.reduce((sum, d) => {
+    const perPerson = d.total_estimated_stay_usd || 0;
+    return sum + perPerson * passengerCount;
+  }, 0) || 0;
 
   return (
     <div className="budget-panel">
@@ -189,28 +204,27 @@ export default function BudgetPanel({ destinations, totalCost, passengers, trave
       </div>
 
       <div className="budget-cards">
-        {/* Passenger card first */}
         <PassengersCard passengers={passengers} />
 
-        {/* Per-destination budgets */}
         {destinations?.map((dest, i) => (
-          <BudgetCard key={i} dest={dest} index={i} />
+          <BudgetCard key={i} dest={dest} index={i} passengerCount={passengerCount} format={format} />
         ))}
 
-        {/* Grand total */}
         {(grandTotal > 0 || totalCost > 0) && (
           <div className="total-cost-card">
             {grandTotal > 0 && (
               <div style={{ marginBottom: totalCost > 0 ? 16 : 0 }}>
-                <div className="total-cost-label">Total estimated trip spend</div>
-                <div className="total-cost-value">~${grandTotal.toLocaleString()}</div>
-                <div className="total-cost-sub">AI estimate based on {travelerMeta?.label?.toLowerCase() || 'mid-range'} travel style</div>
+                <div className="total-cost-label">
+                  Total estimated spend · {passengerCount} {passengerCount === 1 ? 'traveler' : 'travelers'}
+                </div>
+                <div className="total-cost-value">{format ? `~${format(grandTotal)}` : `~$${grandTotal.toLocaleString()}`}</div>
+                <div className="total-cost-sub">AI estimate · {travelerMeta?.label || 'Mid-range'} style</div>
               </div>
             )}
             {totalCost > 0 && (
               <div style={{ borderTop: grandTotal > 0 ? '1px solid var(--border)' : 'none', paddingTop: grandTotal > 0 ? 16 : 0 }}>
                 <div className="total-cost-label">Confirmed spend (from documents)</div>
-                <div className="total-cost-value" style={{ fontSize: '1.5rem' }}>${totalCost.toLocaleString()}</div>
+                <div className="total-cost-value" style={{ fontSize: '1.5rem' }}>{format ? format(totalCost) : `$${totalCost?.toLocaleString()}`}</div>
                 <div className="total-cost-sub">Extracted from your booking confirmations</div>
               </div>
             )}

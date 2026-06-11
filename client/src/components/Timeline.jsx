@@ -1,6 +1,6 @@
 import EventCard from './EventCard';
 
-export default function Timeline({ events }) {
+export default function Timeline({ events, format }) {
   if (!events || events.length === 0) {
     return (
       <div className="timeline-section">
@@ -17,7 +17,7 @@ export default function Timeline({ events }) {
       <h2>✦ Chronological Timeline</h2>
       <div className="timeline" role="list">
         {events.map((event, i) => (
-          <EventCard key={i} event={event} index={i} />
+          <EventCard key={i} event={event} index={i} format={format} />
         ))}
       </div>
     </div>
