@@ -16,7 +16,12 @@ export function useTripParser() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ segments, travelerType }),
       });
-      const json = await res.json();
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error('Server is starting up — please try again in a moment.');
+      }
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Failed to parse documents.');
       }

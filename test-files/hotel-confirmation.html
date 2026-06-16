@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Booking Confirmation – Booking.com</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 20px; color: #222; }
+  .email { max-width: 620px; margin: 0 auto; background: #fff; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+  .header { background: #003580; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { color: #fff; font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+  .logo span { color: #70b8ff; }
+  .header-right { color: rgba(255,255,255,0.7); font-size: 12px; text-align: right; }
+  .confirmed-bar { background: #008009; color: #fff; text-align: center; padding: 12px 32px; font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+  .body { padding: 28px 32px; }
+  .greeting { font-size: 16px; margin-bottom: 6px; }
+  .greeting strong { color: #003580; }
+  .subtext { font-size: 13px; color: #555; margin-bottom: 24px; line-height: 1.5; }
+  .pin-box { background: #ebf3ff; border: 1px solid #003580; border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; }
+  .pin-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #003580; font-weight: 700; }
+  .pin-value { font-size: 22px; font-weight: 900; color: #003580; letter-spacing: 3px; }
+  .hotel-card { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; margin-bottom: 24px; }
+  .hotel-img { background: linear-gradient(135deg, #1a1a3e 0%, #2d4a7a 50%, #1a3a5c 100%); height: 120px; display: flex; align-items: center; justify-content: center; font-size: 48px; color: rgba(255,255,255,0.5); }
+  .hotel-info { padding: 18px; }
+  .hotel-name { font-size: 18px; font-weight: 700; color: #003580; margin-bottom: 4px; }
+  .hotel-address { font-size: 12px; color: #666; margin-bottom: 10px; }
+  .hotel-stars { color: #f5a623; font-size: 14px; }
+  .hotel-rating { display: inline-block; background: #003580; color: #fff; font-size: 13px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-left: 8px; }
+  .stay-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: #eee; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; margin-bottom: 24px; }
+  .stay-cell { background: #fff; padding: 14px 18px; }
+  .stay-cell .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; font-weight: 700; margin-bottom: 4px; }
+  .stay-cell .value { font-size: 15px; font-weight: 700; color: #222; }
+  .stay-cell .sub { font-size: 11px; color: #888; margin-top: 2px; }
+  .room-box { border: 1px solid #ddd; border-radius: 6px; padding: 16px 18px; margin-bottom: 24px; }
+  .room-name { font-size: 15px; font-weight: 700; color: #222; margin-bottom: 8px; }
+  .room-features { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .room-tag { font-size: 11px; background: #f2f2f2; border: 1px solid #ddd; border-radius: 12px; padding: 3px 10px; color: #444; }
+  .room-tag.green { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; }
+  .price-box { background: #f8f8f8; border: 1px solid #ddd; border-radius: 6px; padding: 18px; margin-bottom: 24px; }
+  .price-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 5px 0; }
+  .price-row.total { font-weight: 700; font-size: 16px; color: #222; border-top: 1px solid #ddd; margin-top: 8px; padding-top: 12px; }
+  .policies { font-size: 12px; color: #555; line-height: 1.7; margin-bottom: 20px; }
+  .policies strong { color: #222; }
+  .cta { display: block; width: 100%; box-sizing: border-box; background: #003580; color: #fff; font-size: 15px; font-weight: 700; text-align: center; padding: 14px; border-radius: 4px; text-decoration: none; margin-bottom: 20px; }
+  .footer { background: #f8f8f8; padding: 18px 32px; font-size: 11px; color: #888; text-align: center; line-height: 1.6; border-top: 1px solid #eee; }
+</style>
+</head>
+<body>
+<div class="email">
+
+  <div class="header">
+    <div class="logo">Booking<span>.</span>com</div>
+    <div class="header-right">booking.com/help<br>+44 203 320 2609</div>
+  </div>
+
+  <div class="confirmed-bar">✓ &nbsp;Your booking is confirmed!</div>
+
+  <div class="body">
+    <p class="greeting">Dear <strong>Alex Johnson</strong>,</p>
+    <p class="subtext">
+      Thank you for booking with Booking.com. Your reservation is confirmed and ready.
+      Please show your confirmation PIN at check-in.
+    </p>
+
+    <div class="pin-box">
+      <div>
+        <div class="pin-label">Booking PIN</div>
+        <div class="pin-value">9 3 7 5 4 1</div>
+      </div>
+      <div style="margin-left:auto;font-size:12px;color:#003580;line-height:1.5">
+        Booking number: <strong>4082.613.917</strong><br>
+        Booked on: 10 Jun 2025
+      </div>
+    </div>
+
+    <!-- HOTEL -->
+    <div class="hotel-card">
+      <div class="hotel-img">🏨</div>
+      <div class="hotel-info">
+        <div class="hotel-name">Hotel Arts Barcelona</div>
+        <div class="hotel-address">Carrer de la Marina, 19–21 · Port Olímpic · Barcelona, Spain</div>
+        <div>
+          <span class="hotel-stars">★★★★★</span>
+          <span class="hotel-rating">9.2</span>
+          <span style="font-size:11px;color:#666;margin-left:6px">Exceptional · 4,812 reviews</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAY DETAILS -->
+    <div class="stay-grid">
+      <div class="stay-cell">
+        <div class="label">Check-in</div>
+        <div class="value">Wed, 16 Jul</div>
+        <div class="sub">2025 · From 15:00</div>
+      </div>
+      <div class="stay-cell">
+        <div class="label">Check-out</div>
+        <div class="value">Sat, 19 Jul</div>
+        <div class="sub">2025 · Until 12:00</div>
+      </div>
+      <div class="stay-cell">
+        <div class="label">Duration</div>
+        <div class="value">3 nights</div>
+        <div class="sub">2 guests</div>
+      </div>
+    </div>
+
+    <!-- ROOM -->
+    <div class="room-box">
+      <div class="room-name">Superior Double Room — Sea View</div>
+      <div class="room-features">
+        <span class="room-tag">🛏 King bed</span>
+        <span class="room-tag">🌊 Sea view</span>
+        <span class="room-tag">📶 Free WiFi</span>
+        <span class="room-tag">🅿 Free parking</span>
+        <span class="room-tag green">✓ Free cancellation until 14 Jul 2025</span>
+        <span class="room-tag green">✓ Breakfast included</span>
+      </div>
+    </div>
+
+    <!-- PRICE -->
+    <div class="price-box">
+      <div class="price-row"><span>Superior Double Room (3 nights)</span><span>€630.00</span></div>
+      <div class="price-row"><span>Breakfast for 2 (3 days)</span><span>€90.00</span></div>
+      <div class="price-row"><span>City tax (€3.00 per person/night)</span><span>€18.00</span></div>
+      <div class="price-row"><span>VAT (10%)</span><span>€63.00</span></div>
+      <div class="price-row total"><span>Total Price</span><span>€801.00</span></div>
+      <div style="font-size:11px;color:#888;margin-top:8px">Payment method: Visa ending 4242 · charged on 10 Jun 2025</div>
+    </div>
+
+    <!-- POLICIES -->
+    <div class="policies">
+      <strong>Check-in:</strong> From 15:00 (ID required at front desk)<br>
+      <strong>Check-out:</strong> Until 12:00<br>
+      <strong>Cancellation:</strong> Free cancellation until 23:59 on 14 Jul 2025. After this date, the full amount will be charged.<br>
+      <strong>Pets:</strong> Not allowed<br>
+      <strong>Smoking:</strong> Non-smoking rooms only
+    </div>
+
+    <a class="cta" href="#">View or manage your booking</a>
+  </div>
+
+  <div class="footer">
+    Booking.com B.V., Herengracht 597, 1017 CE Amsterdam, Netherlands<br>
+    This is an automated email — please do not reply directly.<br>
+    Questions? Visit <u>booking.com/help</u>
+  </div>
+</div>
+</body>
+</html>

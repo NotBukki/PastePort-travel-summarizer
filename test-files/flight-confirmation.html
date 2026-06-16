@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight Booking Confirmation – FR2341</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; color: #222; }
+  .email { max-width: 620px; margin: 0 auto; background: #fff; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+  .header { background: #073590; padding: 24px 32px; display: flex; align-items: center; gap: 16px; }
+  .header-logo { color: #f6c700; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .header-sub { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 2px; }
+  .banner { background: #eaf2ff; border-left: 4px solid #073590; padding: 14px 32px; font-size: 13px; color: #073590; font-weight: 600; }
+  .body { padding: 28px 32px; }
+  h2 { font-size: 18px; margin: 0 0 6px; }
+  .ref { font-size: 13px; color: #666; margin-bottom: 24px; }
+  .ref span { font-weight: 700; color: #222; letter-spacing: 1px; }
+  .flight-box { border: 1px solid #dde3ef; border-radius: 6px; overflow: hidden; margin-bottom: 24px; }
+  .flight-box-header { background: #073590; color: #fff; padding: 10px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .flight-row { display: flex; align-items: center; padding: 20px 18px; gap: 0; }
+  .airport { flex: 1; }
+  .airport-code { font-size: 28px; font-weight: 900; color: #073590; letter-spacing: -1px; }
+  .airport-name { font-size: 12px; color: #666; margin-top: 2px; }
+  .flight-middle { flex: 1; text-align: center; }
+  .flight-time { font-size: 14px; font-weight: 700; color: #222; }
+  .flight-arrow { font-size: 22px; color: #073590; margin: 4px 0; }
+  .flight-num { font-size: 11px; color: #888; }
+  .divider { border: none; border-top: 1px solid #eee; margin: 0 18px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 18px; }
+  .detail-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 3px; font-weight: 700; }
+  .detail-item .value { font-size: 14px; font-weight: 600; color: #222; }
+  .passenger-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+  .passenger-table th { background: #f8f9fc; text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #666; font-weight: 700; border-bottom: 1px solid #eee; }
+  .passenger-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; color: #333; }
+  .price-box { background: #f8f9fc; border: 1px solid #dde3ef; border-radius: 6px; padding: 18px; margin-bottom: 24px; }
+  .price-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 4px 0; }
+  .price-row.total { font-weight: 700; font-size: 16px; color: #222; border-top: 1px solid #dde3ef; margin-top: 8px; padding-top: 12px; }
+  .footer { background: #f8f9fc; padding: 18px 32px; font-size: 11px; color: #888; text-align: center; line-height: 1.6; border-top: 1px solid #eee; }
+  .tag { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 12px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="email">
+
+  <div class="header">
+    <div>
+      <div class="header-logo">✈ AirLink</div>
+      <div class="header-sub">Booking Confirmation</div>
+    </div>
+  </div>
+
+  <div class="banner">
+    Your booking is confirmed! <span class="tag">✓ CONFIRMED</span>
+  </div>
+
+  <div class="body">
+    <h2>Booking Confirmation</h2>
+    <p class="ref">Booking Reference: <span>XABK72</span> &nbsp;|&nbsp; Issued: 10 Jun 2025</p>
+
+    <!-- OUTBOUND FLIGHT -->
+    <div class="flight-box">
+      <div class="flight-box-header">Outbound Flight — Wed 16 Jul 2025</div>
+      <div class="flight-row">
+        <div class="airport">
+          <div class="airport-code">LHR</div>
+          <div class="airport-name">London Heathrow</div>
+          <div class="flight-time">08:45</div>
+        </div>
+        <div class="flight-middle">
+          <div class="flight-arrow">→</div>
+          <div class="flight-num">AL 2341 &nbsp;·&nbsp; 2h 35m</div>
+        </div>
+        <div class="airport" style="text-align:right">
+          <div class="airport-code">BCN</div>
+          <div class="airport-name">Barcelona El Prat</div>
+          <div class="flight-time">12:20</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="label">Aircraft</div><div class="value">Airbus A320</div></div>
+        <div class="detail-item"><div class="label">Class</div><div class="value">Economy</div></div>
+        <div class="detail-item"><div class="label">Terminal</div><div class="value">Terminal 2</div></div>
+        <div class="detail-item"><div class="label">Check-in closes</div><div class="value">06:15 LHR</div></div>
+      </div>
+    </div>
+
+    <!-- RETURN FLIGHT -->
+    <div class="flight-box">
+      <div class="flight-box-header">Return Flight — Sat 19 Jul 2025</div>
+      <div class="flight-row">
+        <div class="airport">
+          <div class="airport-code">BCN</div>
+          <div class="airport-name">Barcelona El Prat</div>
+          <div class="flight-time">15:10</div>
+        </div>
+        <div class="flight-middle">
+          <div class="flight-arrow">→</div>
+          <div class="flight-num">AL 2342 &nbsp;·&nbsp; 2h 25m</div>
+        </div>
+        <div class="airport" style="text-align:right">
+          <div class="airport-code">LHR</div>
+          <div class="airport-name">London Heathrow</div>
+          <div class="flight-time">16:35</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="label">Aircraft</div><div class="value">Airbus A320</div></div>
+        <div class="detail-item"><div class="label">Class</div><div class="value">Economy</div></div>
+        <div class="detail-item"><div class="label">Terminal</div><div class="value">Terminal 1</div></div>
+        <div class="detail-item"><div class="label">Check-in closes</div><div class="value">13:10 BCN</div></div>
+      </div>
+    </div>
+
+    <!-- PASSENGERS -->
+    <table class="passenger-table">
+      <thead>
+        <tr>
+          <th>Passenger</th>
+          <th>Seat (Outbound)</th>
+          <th>Seat (Return)</th>
+          <th>Extras</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mr Alex Johnson</td>
+          <td>14C</td>
+          <td>22A</td>
+          <td>Priority boarding · 23kg hold bag</td>
+        </tr>
+        <tr>
+          <td>Ms Sarah Johnson</td>
+          <td>14D</td>
+          <td>22B</td>
+          <td>23kg hold bag</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PRICE BREAKDOWN -->
+    <div class="price-box">
+      <div class="price-row"><span>2x Outbound flight (Economy)</span><span>£109.98</span></div>
+      <div class="price-row"><span>2x Return flight (Economy)</span><span>£119.98</span></div>
+      <div class="price-row"><span>Priority boarding (1 pax)</span><span>£14.99</span></div>
+      <div class="price-row"><span>Hold luggage 23kg (2 pax × 2 flights)</span><span>£87.96</span></div>
+      <div class="price-row"><span>Taxes &amp; fees</span><span>£32.40</span></div>
+      <div class="price-row total"><span>Total Paid</span><span>£365.31</span></div>
+    </div>
+
+    <p style="font-size:13px;color:#555;line-height:1.6">
+      Please check in online at <strong>airlink.example.com</strong> between 30 days and 4 hours before departure.
+      Your e-ticket is attached to this email. Present your booking reference at the airport.
+    </p>
+  </div>
+
+  <div class="footer">
+    AirLink Ltd · Customer Services: 0345 700 0000<br>
+    This is an automated confirmation — please do not reply to this email.
+  </div>
+</div>
+</body>
+</html>
